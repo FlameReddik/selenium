@@ -41,8 +41,8 @@ class CreateCS {
 
     @Test
     void call() {
-        //openApplication();
-        createApplication();
+        openApplication();
+        //createApplication();
         openCSTab();
         linearCSValidationCommissionPremium();
         openSummary();
@@ -63,14 +63,14 @@ class CreateCS {
         assertTrue(webDriver.findElement(summaryHeader).isDisplayed());
     }
 
-/*    static void openApplication() {
+    static void openApplication() {
         By applicationElement = By.xpath("(//div[@class='applications-list-row ng-scope'])[1]");
         wait.until(ExpectedConditions.presenceOfElementLocated(applicationElement));
         webDriver.findElement(applicationElement).click();
         By summaryHeader = By.xpath("//span[contains(.,'Application summary')]");
         wait.until(ExpectedConditions.presenceOfElementLocated(summaryHeader));
         assertTrue(webDriver.findElement(summaryHeader).isDisplayed());
-    }*/
+    }
 
     static void openCSTab() {
         By CSTab = By.xpath("//div[@title='Collection Schedule']");
@@ -110,17 +110,16 @@ class CreateCS {
         By startLoanEdit = By.cssSelector("div.application-details-loan .form-control-start-edit");
         wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit));
         webDriver.findElement(startLoanEdit).click();
-        By commissionField = By.xpath("//input[@id='euroCommission']");
-        webDriver.findElement(commissionField).sendKeys("100");
-        By premiumField = By.xpath("//input[@id='euroPremium']");
-        webDriver.findElement(premiumField).sendKeys("150");
-        By confirmLoanEdit = By.cssSelector("div.application-details-loan .form-control-confirm-edit");
-        wait.until(ExpectedConditions.presenceOfElementLocated(confirmLoanEdit));
-        webDriver.findElement(confirmLoanEdit).click();
-       webDriver.findElement(commissionField);
-        assertEquals(100, 100);
-        webDriver.findElement(premiumField);
-        assertEquals(150, 150);
+        By commissionFieldActive = By.xpath("//input[@id='euroCommission']");
+        webDriver.findElement(commissionFieldActive).sendKeys("100");
+        By premiumFieldActive = By.xpath("//input[@id='euroPremium']");
+        webDriver.findElement(premiumFieldActive).sendKeys("150");
+        webDriver.findElement(By.cssSelector("div.application-details-loan .form-control-confirm-edit")).click();
+        By commissionFieldInactive = By.xpath("(//div[@class='fake-input-field width1of3 ng-binding'])[2]");
+        By premiumFieldInactive = By.xpath("(//div[@class='fake-input-field width1of3 ng-binding'])[4]");
+        assertEquals(webDriver.findElement(commissionFieldInactive).getText(), "100.00");
+        assertEquals(webDriver.findElement(premiumFieldInactive).getText(), "150.00");
+
     }
 
     static void linearCSValidationDate() {
@@ -130,23 +129,22 @@ class CreateCS {
         assertTrue(webDriver.findElement(dateValidation).isDisplayed());
     }
 
-    static void fixDateValidation(){
+    static void fixDateValidation() {
         By startLoanEdit = By.cssSelector("div.application-details-loan .form-control-start-edit");
         wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit));
         webDriver.findElement(startLoanEdit).click();
-        By startDate = By.xpath("//button[contains(@ng-click,'applicationStartDateDob.opened = !applicationStartDateDob.opened')]");
-        webDriver.findElement(startDate).click();
-        By currentDate = By.xpath("//button[@class='btn btn-default btn-sm active']");
-        webDriver.findElement(currentDate).click();
-        By tenor = By.xpath("//input[contains(@ng-model,'applicationModified.loanDuration')]");
-        webDriver.findElement(tenor).sendKeys("3");
+        By startDateButton = By.xpath("//button[contains(@ng-click,'applicationStartDateDob.opened = !applicationStartDateDob.opened')]");
+        webDriver.findElement(startDateButton).click();
+        webDriver.findElement(By.xpath("//button[@class='btn btn-default btn-sm active']")).click();
+        By tenorActive = By.xpath("//input[contains(@ng-model,'applicationModified.loanDuration')]");
+        webDriver.findElement(tenorActive).sendKeys("3");
         By confirmLoanEdit = By.cssSelector("div.application-details-loan .form-control-confirm-edit");
         wait.until(ExpectedConditions.presenceOfElementLocated(confirmLoanEdit));
         webDriver.findElement(confirmLoanEdit).click();
-        webDriver.findElement(startDate);
-        assertEquals(currentDate, currentDate);
-        webDriver.findElement(tenor);
-        assertEquals(3, 3);
+        By startDateField = By.xpath("//*[@id='applicationStartDate']");
+        By tenorInactive = By.xpath("(//div[@class='fake-input-field width1of3 ng-binding'])[6]");
+        //assertEquals(webDriver.findElement(startDateField).getText(), new java.util.Date().toString());
+        assertEquals(webDriver.findElement(tenorInactive).getText(), "3");
     }
 
     static void saveLinearCS() {
