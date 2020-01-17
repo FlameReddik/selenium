@@ -4,12 +4,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -60,8 +63,20 @@ class EditSummary {
         webDriver.findElement(startLoanEdit).click();
         webDriver.findElement(By.xpath("//i[@class='fa fa-lock']")).click();
         By requestedAmountActive = By.xpath("//input[@ng-model='applicationModified.loanAmount']");
-        webDriver.findElement(requestedAmountActive).sendKeys(String.valueOf(10000));
+        WebElement requestedAmountInput = webDriver.findElement(requestedAmountActive);
+        requestedAmountInput.clear();
+        Actions actions = new Actions(webDriver);
+        actions
+                .click(requestedAmountInput)
+//                .pause(500)
+//                .keyDown(Keys.CONTROL)
+//                .sendKeys(Keys.chord("A"))
+//                .keyUp(Keys.CONTROL)
+//                .pause(500)
+                .sendKeys(String.valueOf(amount))
+                .perform();
         webDriver.findElement(By.cssSelector("div.application-details-loan .form-control-confirm-edit")).click();
+        assertEquals(String.valueOf(amount), requestedAmountInput.getAttribute("value"));
 /*        By requestedAmountInactive = By.xpath("");
         assertEquals(webDriver.findElement(requestedAmountInactive).getText(), String.valueOf(amount));*/
 
