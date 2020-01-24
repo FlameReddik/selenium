@@ -61,11 +61,19 @@ class CreateCS {
 
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
 
-    static By summaryHeaderInit() {
+    static By summaryHeader() {
         return By.xpath("//span[contains(.,'Application summary')]");
     }
 
-    static By linearCSButtonInit() {
+    static By startLoanEdit() {
+        return By.cssSelector("div.application-details-loan .form-control-start-edit");
+    }
+
+    static By confirmLoanEdit() {
+        return By.cssSelector("div.application-details-loan .form-control-confirm-edit");
+    }
+
+    static By linearCSButton() {
         return By.xpath("//button[contains(text(),'Preview linear collection schedule')]");
     }
 
@@ -74,9 +82,8 @@ class CreateCS {
         By newLoan = By.xpath("//a[@title = 'New loan']");
         wait.until(ExpectedConditions.presenceOfElementLocated(newLoan));
         webDriver.findElement(newLoan).click();
-        By summaryHeader = summaryHeaderInit();
-        wait.until(ExpectedConditions.presenceOfElementLocated(summaryHeader));
-        assertTrue(webDriver.findElement(summaryHeader).isDisplayed());
+        wait.until(ExpectedConditions.presenceOfElementLocated(summaryHeader()));
+        assertTrue(webDriver.findElement(summaryHeader()).isDisplayed());
 
     }
 
@@ -84,9 +91,8 @@ class CreateCS {
         By applicationElement = By.xpath("(//div[@class='applications-list-row ng-scope'])[1]");
         wait.until(ExpectedConditions.presenceOfElementLocated(applicationElement));
         webDriver.findElement(applicationElement).click();
-        By summaryHeader = summaryHeaderInit();
-        wait.until(ExpectedConditions.presenceOfElementLocated(summaryHeader));
-        assertTrue(webDriver.findElement(summaryHeader).isDisplayed());
+        wait.until(ExpectedConditions.presenceOfElementLocated(summaryHeader()));
+        assertTrue(webDriver.findElement(summaryHeader()).isDisplayed());
     }
 
     static void openCSTab() {
@@ -98,19 +104,9 @@ class CreateCS {
         assertTrue(webDriver.findElement(loanStartDate).isDisplayed());
     }
 
-/*    static void previewLinearCS() {
-        By linearCSButton = By.xpath("//button[contains(text(),'Preview linear collection schedule')]");
-        wait.until(ExpectedConditions.presenceOfElementLocated(linearCSButton));
-        webDriver.findElement(linearCSButton).click();
-        By loanStartDate = By.xpath("//td[contains(.,'Loan Start Date')]");
-        wait.until(ExpectedConditions.presenceOfElementLocated(loanStartDate));
-        assertTrue(webDriver.findElement(loanStartDate).isDisplayed());
-    }*/
-
     static void linearCSValidationCommissionPremium() {
-        By linearCSButton = linearCSButtonInit();
-        wait.until(ExpectedConditions.presenceOfElementLocated(linearCSButton));
-        webDriver.findElement(linearCSButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(linearCSButton()));
+        webDriver.findElement(linearCSButton()).click();
         By commissionPremiumValidation = By.xpath("//p[contains(.,'Commission and Premium fields should be set')]");
         wait.until(ExpectedConditions.presenceOfElementLocated(commissionPremiumValidation));
         assertTrue(webDriver.findElement(commissionPremiumValidation).isDisplayed());
@@ -126,14 +122,13 @@ class CreateCS {
     }
 
     static void fixCommissionPremiumValidation(){
-        By startLoanEdit = By.cssSelector("div.application-details-loan .form-control-start-edit");
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit));
-        webDriver.findElement(startLoanEdit).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        webDriver.findElement(startLoanEdit()).click();
         By commissionFieldActive = By.xpath("//input[@id='euroCommission']");
         webDriver.findElement(commissionFieldActive).sendKeys("100");
         By premiumFieldActive = By.xpath("//input[@id='euroPremium']");
         webDriver.findElement(premiumFieldActive).sendKeys("150");
-        webDriver.findElement(By.cssSelector("div.application-details-loan .form-control-confirm-edit")).click();
+        webDriver.findElement(confirmLoanEdit()).click();
         By commissionFieldInactive = By.xpath("(//div[@class='fake-input-field width1of3 ng-binding'])[2]");
         By premiumFieldInactive = By.xpath("(//div[@class='fake-input-field width1of3 ng-binding'])[4]");
         assertEquals(webDriver.findElement(commissionFieldInactive).getText(), "100.00");
@@ -142,18 +137,16 @@ class CreateCS {
     }
 
     static void linearCSValidationDate() {
-        By linearCSButton = linearCSButtonInit();
-        wait.until(ExpectedConditions.presenceOfElementLocated(linearCSButton));
-        webDriver.findElement(linearCSButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(linearCSButton()));
+        webDriver.findElement(linearCSButton()).click();
         By dateValidation = By.xpath("//p[contains(.,'Incorrect start and(or) end dates')]");
         wait.until(ExpectedConditions.presenceOfElementLocated(dateValidation));
         assertTrue(webDriver.findElement(dateValidation).isDisplayed());
     }
 
     static void fixDateValidation() {
-        By startLoanEdit = By.cssSelector("div.application-details-loan .form-control-start-edit");
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit));
-        webDriver.findElement(startLoanEdit).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        webDriver.findElement(startLoanEdit()).click();
         By startDateButton = By.xpath("//button[contains(@ng-click,'applicationStartDateDob.opened = !applicationStartDateDob.opened')]");
         webDriver.findElement(startDateButton).click();
         By currentDate = By.xpath("//button[@class = 'btn btn-default btn-sm active']");
@@ -161,16 +154,15 @@ class CreateCS {
         webDriver.findElement(currentDate).click();
         By tenor = By.xpath("//input[contains(@ng-model,'applicationModified.loanDuration')]");
         webDriver.findElement(tenor).sendKeys("3");
-        webDriver.findElement(By.cssSelector("div.application-details-loan .form-control-confirm-edit")).click();
+        webDriver.findElement(confirmLoanEdit()).click();
         WebElement startDateField = webDriver.findElement(By.xpath("//input[contains(@ng-model,'applicationStartDate')]"));
         assertEquals(LocalDate.now(), LocalDate.parse(startDateField.getAttribute("value"), formatter));
         assertEquals("3", webDriver.findElement(tenor).getAttribute("value"));
     }
 
     static void saveLinearCS() {
-        By linearCSButton = linearCSButtonInit();
-        wait.until(ExpectedConditions.presenceOfElementLocated(linearCSButton));
-        webDriver.findElement(linearCSButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(linearCSButton()));
+        webDriver.findElement(linearCSButton()).click();
         By saveLinearCSButton = By.xpath("//button[contains(text(),'Save this preview data')]");
         wait.until(ExpectedConditions.presenceOfElementLocated(saveLinearCSButton));
         webDriver.findElement(saveLinearCSButton).click();

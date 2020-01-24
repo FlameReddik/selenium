@@ -1,23 +1,16 @@
 package com.automation.selenium;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
+    class TestSummary extends TestClass {
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class RunTest {
-    private static ChromeDriver webDriver;
-    private static WebDriverWait wait;
 
+/*    static ChromeDriver webDriver;
+    static WebDriverWait wait;*/
+/*
     @BeforeAll
-    static void startBrowser() {
+    public static void startBrowser() {
         System.setProperty("webdriver.chrome.driver", "drivers/chromedriver");
         webDriver = new ChromeDriver();
         wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
@@ -34,18 +27,29 @@ class RunTest {
         By applicationsList = By.xpath("//*[contains(text(),'Applications')]");
         wait.until(ExpectedConditions.presenceOfElementLocated(applicationsList));
         assertTrue(webDriver.findElement(applicationsList).isDisplayed());
-    }
+    }*/
 
     @Test
-    void callAll() {
+    private void editApplicationSummary() {
+
+
+/*
+        EditSummary editSummary = new EditSummary(webDriver);
+
         EditSummary.openApplication();
         EditSummary.changeRequestedAmount(10000);
+        EditSummary.changeUpdatedAmount(20000);
+        EditSummary.changeCalculatedAmount(30000);
+        EditSummary.changeAgreedAmount(40000);*/
+
+
+
     }
 
 
-
+/*
     @AfterAll
     static void tearDown() {
         webDriver.quit();
-    }
+    }*/
 }

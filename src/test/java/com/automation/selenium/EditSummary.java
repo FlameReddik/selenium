@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -14,7 +13,6 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 class EditSummary {
     private static ChromeDriver webDriver;
@@ -43,12 +41,21 @@ class EditSummary {
 
     @Test
     void callAll() {
-        EditSummary.openApplication();
-        EditSummary.changeRequestedAmount(10000);
-        EditSummary.changeUpdatedAmount(20000);
+        openApplication();
+        changeRequestedAmount(10000);
+        changeUpdatedAmount(20000);
+        changeCalculatedAmount(30000);
+        changeAgreedAmount(40000);
+        changePaidAmount(50000);
+
     }
-    static By startLoanEditInit() {
+
+    static By startLoanEdit() {
         return By.cssSelector("div.application-details-loan .form-control-start-edit");
+    }
+
+    static By confirmLoanEdit() {
+        return By.cssSelector("div.application-details-loan .form-control-confirm-edit");
     }
 
     static void openApplication() {
@@ -61,34 +68,54 @@ class EditSummary {
     }
 
     static void changeRequestedAmount(int amount) {
-        By startLoanEdit = startLoanEditInit();
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit));
-        webDriver.findElement(startLoanEdit).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        webDriver.findElement(startLoanEdit()).click();
         webDriver.findElement(By.xpath("//i[@class='fa fa-lock']")).click();
         WebElement requestedAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.loanAmount']"));
         requestedAmountInput.clear();
-        Actions actions = new Actions(webDriver);
-        actions
-                .click(requestedAmountInput)
-                .sendKeys(String.valueOf(amount))
-                .perform();
-        webDriver.findElement(By.cssSelector("div.application-details-loan .form-control-confirm-edit")).click();
+        requestedAmountInput.sendKeys(String.valueOf(amount));
+        webDriver.findElement(confirmLoanEdit()).click();
         assertEquals(String.valueOf(amount), requestedAmountInput.getAttribute("value"));
     }
 
-
     static void changeUpdatedAmount(int amount) {
-        By startLoanEdit = startLoanEditInit();
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit));
-        webDriver.findElement(startLoanEdit).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        webDriver.findElement(startLoanEdit()).click();
         WebElement updatedAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.updatedAmount']"));
-        Actions actions = new Actions(webDriver);
-        actions
-                .click(updatedAmountInput)
-                .sendKeys(String.valueOf(amount))
-                .perform();
-        webDriver.findElement(By.cssSelector("div.application-details-loan .form-control-confirm-edit")).click();
+        updatedAmountInput.clear();
+        updatedAmountInput.sendKeys(String.valueOf(amount));
+        webDriver.findElement(confirmLoanEdit()).click();
         assertEquals(String.valueOf(amount), updatedAmountInput.getAttribute("value"));
+    }
+
+    static void changeCalculatedAmount(int amount) {
+        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        webDriver.findElement(startLoanEdit()).click();
+        WebElement calculatedAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.autoAmount']"));
+        calculatedAmountInput.clear();
+        calculatedAmountInput.sendKeys(String.valueOf(amount));
+        webDriver.findElement(confirmLoanEdit()).click();
+        assertEquals(String.valueOf(amount), calculatedAmountInput.getAttribute("value"));
+    }
+
+    static void changeAgreedAmount(int amount) {
+        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        webDriver.findElement(startLoanEdit()).click();
+        WebElement agreedAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.agreedAmount']"));
+        agreedAmountInput.clear();
+        agreedAmountInput.sendKeys(String.valueOf(amount));
+        webDriver.findElement(confirmLoanEdit()).click();
+        assertEquals(String.valueOf(amount), agreedAmountInput.getAttribute("value"));
+    }
+
+    static void changePaidAmount(int amount) {
+        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        webDriver.findElement(startLoanEdit()).click();
+        WebElement paidAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.contractAmount']"));
+        paidAmountInput.clear();
+        paidAmountInput.sendKeys(String.valueOf(amount));
+        webDriver.findElement(confirmLoanEdit()).click();
+        assertEquals(String.valueOf(amount), paidAmountInput.getAttribute("value"));
     }
 
 
