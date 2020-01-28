@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,8 +49,12 @@ class EditSummary {
         changeCalculatedAmount(30000);
         changeAgreedAmount(40000);
         changePaidAmount(50000);
-
+        changeCommissionPremium(100, 150);
+        changeReassignmentAndReleaseDate();
+        changeStartDateTenorEndDate();
     }
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMMM-yyyy");
 
     static By startLoanEdit() {
         return By.cssSelector("div.application-details-loan .form-control-start-edit");
@@ -58,8 +64,17 @@ class EditSummary {
         return By.cssSelector("div.application-details-loan .form-control-confirm-edit");
     }
 
+    static By spinner() {
+        return By.xpath("//div[@class='loading-spinner animated fadeIn']");
+    }
+
+    static By pickCurrentDate() {
+        return By.xpath("//button[@class='btn btn-default btn-sm active']");
+    }
+
+
     static void openApplication() {
-        By applicationElement = By.xpath("(//div[@class='applications-list-row ng-scope'])[1]");
+        By applicationElement = By.xpath("(//div[@class='applications-list-row ng-scope'])[4]");
         wait.until(ExpectedConditions.presenceOfElementLocated(applicationElement));
         webDriver.findElement(applicationElement).click();
         By summaryHeader = By.xpath("//span[contains(.,'Application summary')]");
@@ -79,7 +94,7 @@ class EditSummary {
     }
 
     static void changeUpdatedAmount(int amount) {
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(spinner()));
         webDriver.findElement(startLoanEdit()).click();
         WebElement updatedAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.updatedAmount']"));
         updatedAmountInput.clear();
@@ -89,7 +104,7 @@ class EditSummary {
     }
 
     static void changeCalculatedAmount(int amount) {
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(spinner()));
         webDriver.findElement(startLoanEdit()).click();
         WebElement calculatedAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.autoAmount']"));
         calculatedAmountInput.clear();
@@ -99,7 +114,7 @@ class EditSummary {
     }
 
     static void changeAgreedAmount(int amount) {
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(spinner()));
         webDriver.findElement(startLoanEdit()).click();
         WebElement agreedAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.agreedAmount']"));
         agreedAmountInput.clear();
@@ -109,7 +124,7 @@ class EditSummary {
     }
 
     static void changePaidAmount(int amount) {
-        wait.until(ExpectedConditions.presenceOfElementLocated(startLoanEdit()));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(spinner()));
         webDriver.findElement(startLoanEdit()).click();
         WebElement paidAmountInput = webDriver.findElement(By.xpath("//input[@ng-model='applicationModified.contractAmount']"));
         paidAmountInput.clear();
@@ -118,6 +133,49 @@ class EditSummary {
         assertEquals(String.valueOf(amount), paidAmountInput.getAttribute("value"));
     }
 
+    static void changeCommissionPremium(int commission, int premium) {
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(spinner()));
+        webDriver.findElement(startLoanEdit()).click();
+        WebElement commissionField = webDriver.findElement(By.xpath("//input[@id='euroCommission']"));
+        commissionField.clear();
+        commissionField.sendKeys(String.valueOf(commission));
+        WebElement premiumField = webDriver.findElement(By.xpath("//input[@id='euroPremium']"));
+        premiumField.clear();
+        premiumField.sendKeys(String.valueOf(premium));
+        webDriver.findElement(confirmLoanEdit()).click();
+        assertEquals(String.valueOf(commission), commissionField.getAttribute("value"));
+        assertEquals(String.valueOf(premium), premiumField.getAttribute("value"));
+    }
+
+    static void changeReassignmentAndReleaseDate() {
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(spinner()));
+        webDriver.findElement(startLoanEdit()).click();
+        WebElement reassignmentAndReleaseDateDateField = webDriver.findElement(By.xpath("//input[contains(@ng-model,'applicationReassignmentAndReleaseDate')]"));
+        reassignmentAndReleaseDateDateField.clear();
+        By reassignmentAndReleaseDateDateButton = By.xpath("//button[contains(@ng-click,'reassignmentAndReleaseDateIsOpened = !reassignmentAndReleaseDateIsOpened')]");
+        webDriver.findElement(reassignmentAndReleaseDateDateButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(pickCurrentDate()));
+        webDriver.findElement(pickCurrentDate()).click();
+        webDriver.findElement(confirmLoanEdit()).click();
+        assertEquals(LocalDate.now(), LocalDate.parse(reassignmentAndReleaseDateDateField.getAttribute("value"), formatter));
+    }
+
+    static void changeStartDateTenorEndDate() {
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(spinner()));
+        webDriver.findElement(startLoanEdit()).click();
+        WebElement startDateField = webDriver.findElement(By.xpath("//input[contains(@ng-model,'applicationStartDate')]"));
+        startDateField.clear();
+        By startDateButton = By.xpath("//button[contains(@ng-click,'applicationStartDateDob.opened = !applicationStartDateDob.opened')]");
+        webDriver.findElement(startDateButton).click();
+        wait.until(ExpectedConditions.presenceOfElementLocated(pickCurrentDate()));
+        webDriver.findElement(pickCurrentDate()).click();
+        WebElement tenor = webDriver.findElement(By.xpath("//input[contains(@ng-model,'applicationModified.loanDuration')]"));
+        tenor.clear();
+        tenor.sendKeys("3");
+        webDriver.findElement(confirmLoanEdit()).click();
+        assertEquals(LocalDate.now(), LocalDate.parse(startDateField.getAttribute("value"), formatter));
+        assertEquals("3", tenor.getAttribute("value"));
+    }
 
 
     @AfterAll
