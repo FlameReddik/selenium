@@ -72,7 +72,6 @@ class EditSummary {
         return By.xpath("//button[@class='btn btn-default btn-sm active']");
     }
 
-
     static void openApplication() {
         By applicationElement = By.xpath("(//div[@class='applications-list-row ng-scope'])[4]");
         wait.until(ExpectedConditions.presenceOfElementLocated(applicationElement));
